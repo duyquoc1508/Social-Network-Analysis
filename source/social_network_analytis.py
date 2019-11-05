@@ -21,15 +21,17 @@ data = pd.read_csv("UIT.K11.csv")
 data.head()
 
 list_uid_members = data["UID"].tolist()
-print(list_uid_members)
+print(type(list_uid_members[0]))
+
+"""Chuyển giá trị sang kiểu stringstring"""
 
 list_uid_members_str = list(map(str,list_uid_members))
-print(list_uid_members_str)
+print(type(list_uid_members_str[0]))
 
 """Gọi tới api của Facebook để lấy bạn bè của tất cả user"""
 
 import requests as req
-token = 'EAAAAZAw4FxQIBAD8OB614aWaBpV9Jc3JjtXegHUasc0UX4ZA18Vk065sewsxSZA7LVoYZAPvnAIlHZAuI3SX8XNze3qZAEOOaT1NBqiK1yusYUk0yZA3QBKOHqHAf0ZCmwwGZBQF6KJ9VH9pE09iRMJZCP3Q5Qszrsjx39ZAvczngAMuQZDZD'
+token = 'EAAAAZAw4FxQIBAKIZAch0Tk7XNRQa0Vpcg50TTsSZAatoJkJCHZB5c1BsaLCTtDDkoYVVcWDzloCxULYEm6GaZB7aI6e55l3kBgKoEFY5VqmHMdXZAAYHKapB2FZCMzfo4nLToq27yW0Mi3awtjjcuZCJTTXww3sWxqCDzmkrkJh6wZDZD'
 
 """Lấy ra tất cả các user trong group đặt chế độ public friend trên Facebook. Các user không public friend coi như không nằm trong group"""
 
@@ -44,13 +46,13 @@ for uid in list_uid_members_str:
   except:
     continue
 
-print(list_user_public_friend)
+print(list_user_public_friend[0])
 
 print(len(list_user_public_friend))
 
 """Định dạnh trả về của api"""
 
-res = req.get('https://graph.facebook.com/v4.0/100010075866425/friends?fields=id', params={'access_token': token})
+res = req.get('https://graph.facebook.com/v4.0/100009157116574/friends?fields=id', params={'access_token': token})
 print(res.json())
 
 """Với mỗi user chỉ chọn ra các bạn bè nằm trong group UIT K11. Đồng thời ghi vào file"""
@@ -88,7 +90,7 @@ def convert_to_2D_array(rows):
     return [row.split(',') for row in rows]
 
 array_2D = convert_to_2D_array(rows)
-print(array_2D)
+print(array_2D[0])
 
 import networkx as nx
 g = nx.Graph()
@@ -102,12 +104,13 @@ for item in array_2D:
   for index in range(1,len(item)):
     g.add_edge(item[0], item[index])
 
-print(g.nodes())
+print(len(g.nodes()))
 
-print(g.edges())
+print(len(g.edges()))
 
 """Đọc file các uid và name thành dictionary để hiển thị tên lúc tính toán"""
 
+import csv
 reader = csv.reader(open('UIT.K11.csv', 'r'))
 dict_user_uid = dict()
 
@@ -116,7 +119,7 @@ for row in reader:
   dict_user_uid[uid] = name
 # Remove header
 del dict_user_uid['UID']
-print(dict_user_uid)
+print(next(iter(dict_user_uid.items())))
 
 from prettytable import PrettyTable
 # Hiển thị uid, tên và kết quả của độ đo
@@ -160,7 +163,7 @@ findUser(dict_top10_closeness,dict_user_uid)
 
 """**Eigenvector Centrality**"""
 
-dict_eigenvector_centrality = dict( nx.eigenvector_centrality(g))
+dict_eigenvector_centrality = dict(nx.eigenvector_centrality(g))
 
 dict_top10_eigenvector = dict_top10(dict_eigenvector_centrality)
 print('Top 10 Key Player - Eigenvector Centrality')
@@ -173,19 +176,20 @@ findUser(dict_top10_eigenvector,dict_user_uid)
 """Danh sách tất cả các node trong đồ thị"""
 
 nodes = [item[0] for item in array_2D]
-print(nodes)
+print(nodes[0])
 
-Tạo danh sách cạnh có dạnh index của các node
+"""Tạo danh sách cạnh có dạnh index của các node <br>
 Ex: ('100010630570591','100003265219762') -> (0,819)
+"""
 
 edges = []
 for i in range(len(array_2D)):
   for item in array_2D[i][1:]:
     edges.append((i, nodes.index(item)))
-print(edges)
+print(edges[0])
 
 number_node = len(nodes)
-print(numbers_node)
+print(number_node)
 
 number_edge = len(edges)
 print(number_edge)
@@ -227,21 +231,47 @@ print('layt[e[0]][0]: ',layt[e[0]][0])
 print('layt[e[1]]: ',layt[e[1]])
 print('layt[e[1]][0]: ',layt[e[1]][0])
 
-print(Xn)
+print(len(Xn))
+print(Xn[0])
 
-print(Xe)
+# Tọa độ 2 đầu cạnh theo chiều x
+print(Xe[:3])
+print(len(Xe))
 
-"""Chuyển qua tên để vẽ đồ thị"""
+"""67183 / 3 = 22394 edges
+
+Chuyển qua tên để vẽ đồ thị
+"""
 
 info = []
 for i in range(len(nodes)):
   uid = nodes[i]
   name = dict_user_uid[uid]
   info.append(nodes[i]+'<br>'+name)
-print(info)
+print(info[0])
 
-print(nodes)
-print(info)
+print(nodes[1])
+print(info[1])
+
+"""Xác định màu cho các node"""
+
+color = []
+for item in array_2D:
+  len_item = len(item)
+  if(len_item == 1):
+    color.append(10)
+  elif(len_item == 2):
+    color.append(8)
+  elif(len_item == 3):
+    color.append(6)
+  elif(len_item < 5):
+    color.append(4)
+  elif(len_item < 10):
+    color.append(3)
+  elif(len_item < 50):
+    color.append(2)
+  else:
+    color.append(1)
 
 from plotly.offline import plot
 import plotly.graph_objs as go
@@ -260,7 +290,7 @@ trace2=go.Scatter3d(x=Xn,
                mode='markers',
                marker=dict(symbol='circle',
                              size=5,
-                             color='rgb(51, 190, 214)',
+                             color=color,
                              line=dict(color='rgb(50,50,50)', width=0.3),
                              ),
                text=info,
@@ -277,7 +307,7 @@ axis=dict(showbackground=False,
 
 layout = go.Layout(
          title="Network of friends in the group UIT K11 (3D visualization)",
-         width=1024,
+         width=1366,
          height=768,
          showlegend=False,
          scene=dict(
