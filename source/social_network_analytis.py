@@ -31,7 +31,7 @@ print(type(list_uid_members_str[0]))
 """Gọi tới api của Facebook để lấy bạn bè của tất cả user"""
 
 import requests as req
-token = 'EAAAAZAw4FxQIBAKIZAch0Tk7XNRQa0Vpcg50TTsSZAatoJkJCHZB5c1BsaLCTtDDkoYVVcWDzloCxULYEm6GaZB7aI6e55l3kBgKoEFY5VqmHMdXZAAYHKapB2FZCMzfo4nLToq27yW0Mi3awtjjcuZCJTTXww3sWxqCDzmkrkJh6wZDZD'
+token = 'YOUR_TOKEN_HERE'
 
 """Lấy ra tất cả các user trong group đặt chế độ public friend trên Facebook. Các user không public friend coi như không nằm trong group"""
 
