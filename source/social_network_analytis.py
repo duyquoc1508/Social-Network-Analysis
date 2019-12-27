@@ -17,13 +17,13 @@ https://www.facebook.com/groups/UIT.K2016
 """
 
 import pandas as pd 
-data = pd.read_csv("UIT.K11.csv") 
+data = pd.read_csv("UIT.K11.csv")
 data.head()
 
 list_uid_members = data["UID"].tolist()
 print(type(list_uid_members[0]))
 
-"""Chuyển giá trị sang kiểu stringstring"""
+"""Chuyển giá trị sang kiểu string"""
 
 list_uid_members_str = list(map(str,list_uid_members))
 print(type(list_uid_members_str[0]))
@@ -31,10 +31,12 @@ print(type(list_uid_members_str[0]))
 """Gọi tới api của Facebook để lấy bạn bè của tất cả user"""
 
 import requests as req
-token = 'YOUR_TOKEN_HERE'
+token = 'EAAAAZAw4FxQIBAC0PsJZCjx8pu3Pvjq4ZAifAxicj6UJuhzrA98rwA1aW2RO6mHLYNKyMQy9AZA9SivEPjvMZBk9GZBw0UpDQ0IDdKrLNPwQPkSYvbiPcOs525IjDHGNcZCZCHkaBj2qqf3EkF8bouZAJdoQN42ZBJU5HedcJFZCO0eztH9qKsZAaujtX8mkAdZA8vgkZDs'
 
 """Lấy ra tất cả các user trong group đặt chế độ public friend trên Facebook. Các user không public friend coi như không nằm trong group"""
 
+import requests as req
+token = 'YOUR-TOKEN-HERE!'
 list_user_public_friend = []
 for uid in list_uid_members_str:
   try:
@@ -58,7 +60,7 @@ print(res.json())
 """Với mỗi user chỉ chọn ra các bạn bè nằm trong group UIT K11. Đồng thời ghi vào file"""
 
 import csv
-with open('destination.csv', mode='w+') as csvFile:
+with open('destinationestination_fillter.csv', mode='w+') as csvFile:
   writer = csv.writer(csvFile, delimiter=',')
 
   for uid in list_user_public_friend:
@@ -76,12 +78,12 @@ csvFile.close()
 
 """## Tính toán các độ đo trong mạng"""
 
-f = open("destination.csv", "r")
+f = open("destination_fillter.csv", "r")
 data= f.read()
-file = open('destination.csv', 'r+');
+file = open('destination_fillter.csv', 'r+');
 data = file.read().replace(',,','').replace(',\n','\n')
 
-# Loại bỏ đi phần tử cuối vì dòng cuối cũng kết thúc bằng kí hiệu \n
+# Loại bỏ đi phần tử cuối vì dòng cuối cũng kết thúc bằng kí hiệu '\n'
 rows = data.split('\n')[:-1]
 
 """Chuyển thành mảng 2 chiều với mỗi phần tử trong mảng là 1 dòng trong dữ liệu"""
@@ -90,12 +92,12 @@ def convert_to_2D_array(rows):
     return [row.split(',') for row in rows]
 
 array_2D = convert_to_2D_array(rows)
-print(array_2D[0])
+print(array_2D[17:19])
 
-import networkx as nx
+port networkx as nx
 g = nx.Graph()
 
-# Lấy phần tử [i][0] truyền vào làm nodes
+# Lấy phần tử [i][0] truyền vào làm nodes cho đồ thị.
 for node in array_2D:
   g.add_node(node[0])
 
@@ -175,32 +177,40 @@ findUser(dict_top10_eigenvector,dict_user_uid)
 
 """Danh sách tất cả các node trong đồ thị"""
 
+# Danh sách node trong mạng
 nodes = [item[0] for item in array_2D]
 print(nodes[0])
+# Output: 100010630570591
 
 """Tạo danh sách cạnh có dạnh index của các node <br>
 Ex: ('100010630570591','100003265219762') -> (0,819)
 """
 
+# Danh sách cạnh trong mạng ()
 edges = []
 for i in range(len(array_2D)):
   for item in array_2D[i][1:]:
     edges.append((i, nodes.index(item)))
 print(edges[0])
+# Output: (0, 819)
 
 number_node = len(nodes)
 print(number_node)
+# Output: 1441 => node
 
 number_edge = len(edges)
 print(number_edge)
+# Output: 22394 => edges
 
 """Tạo đồ thị"""
 
 import igraph as ig
+# Tạo đồ thị từ danh sách cạnh 
 G=ig.Graph(edges, directed=False)
 
 """Tạo vị trí cho các nodes chế độ Kamada-Kawai 3 chiều"""
 
+# Chia layout 3 chiều 
 layt=G.layout('kk', dim=3)
 
 print(type(layt))
@@ -249,6 +259,7 @@ for i in range(len(nodes)):
   name = dict_user_uid[uid]
   info.append(nodes[i]+'<br>'+name)
 print(info[0])
+# Output: 100010630570591<br>Trần Công
 
 print(nodes[1])
 print(info[1])
@@ -321,3 +332,5 @@ layout = go.Layout(
 data=[trace1, trace2]
 fig=go.Figure(data=data, layout=layout)
 plot(fig, filename='3d_network_graphs.html')
+
+"""Toàn bộ source code tại https://github.com/duyquoc1508/Social-Network-Analysis.git"""
